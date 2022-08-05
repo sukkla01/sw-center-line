@@ -19,51 +19,6 @@ const ping = require('ping');
 const token = '7aCy9SqzcUVgmv6mqcibTIA4EZ8s2TrbqXE4vnQz95mCdW+z9aIQjDeyCKSL11RhUjREJnRetPSIFCu/U17NA8oDyXj8AT0oD4B92GDytXXj2rVN8XQMteuleyz6Wx4RsOR5Ggt1rs3qQvDqXcg8ggdB04t89/1O/w1cDnyilFU='
 
 //reply
-app.get('/confirm/:userid/:vn', async (req, res) => {
-    let userid = req.params.userid
-    let vn = req.params.vn
-    let dataQuery
-    let sql = `SELECT hn,nextdate,r.queue,name 
-    FROM diligent_queue_reserve   r
-    LEFT JOIN diligent_queue_dep d ON d.id = r.dep::int
-    WHERE vn_reserve = '${vn}'      `
-    const response = await db.query(sql);
-    if (response.rows.length > 0) {
-        dataQuery = response.rows
-    }
-
-
-    let date = moment(dataQuery[0].nextdate).add(543, 'year').format('LL')
-
-    let data = {
-        to: userid,
-        messages: [
-            {
-                type: 'text',
-                text: `จองเรียบร้อยแล้ว   \nhn:${dataQuery[0].hn} \nวันที่นัด : ${date} \nแผนก : ${dataQuery[0].name} \nคิวที่ : ${dataQuery[0].queue}  \n***กรุณาเข้าเมนู ข้อมูลรายการนัด `
-            }
-        ]
-    }
-    request({
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer {${token}}`
-        },
-        url: 'https://api.line.me/v2/bot/message/push',
-        method: 'POST',
-        body: data,
-        json: true
-    }, async function (err, res, body) {
-        if (err) console.log('error')
-        if (res) {
-            console.log('success')
-        }
-        if (body) console.log(body)
-    })
-
-    res.sendStatus(200)
-
-})
 app.post('/webhook', (req, res) => {
     let message = ''
     let tdate = ''
@@ -81,20 +36,14 @@ app.post('/webhook', (req, res) => {
     }
 
 
-    if (message == 'แนะนำสุขภาพ') {
+    if (message == 'เบอร์โทร') {
         reply(reply_token, 1)
-    } else if (message == 'ข้อมูลรายการค่ารักษา') {
-        console.log('xx')
-
+    } else if (message == 'คลินิกให้บริการ') {
         reply(reply_token, 2, '')
-    } else if (message == 'เพิ่มเติม') {
+    } else if (message == 'อัตราค่าห้องพิเศษ') {
         reply(reply_token, 3, '')
-    } else if (message == 'จำนวนการจอง') {
+    } else if (message == 'ถามตอบ') {
         reply(reply_token, 5, '')
-    } else if (message == 'date') {
-        reply(reply_token, 6, tdate)
-    } else if (message == 'ข้อมูลส่วนตัว') {
-        reply(reply_token, 7, userId)
     } else {
         reply(reply_token, 4, '')
     }
@@ -383,12 +332,12 @@ async function reply(reply_token, type, date) {
     let reply_tmp
     if (type == 1) {
         // reply_tmp = [flexMulti()]
-        reply_tmp = [Warning()]
+        reply_tmp = [imageTel()]
     } else if (type == 2) {
         // reply_tmp = [imageList1(), imageList2()]
         reply_tmp = [Warning()]
     } else if (type == 3) {
-        reply_tmp = [quickMenu()]
+        reply_tmp = [imageRoom()]
     } else if (type == 5) {
         reply_tmp = [datePicker()]
     } else if (type == 6) {
@@ -896,20 +845,20 @@ function imageDoctor(tdate) {
     return data
 }
 
-function imageList1() {
+function imageTel() {
     let data = {
         "type": "image",
-        "originalContentUrl": `https://linebot-swhospital.diligentsoftinter.com/images/list11.png`,
-        "previewImageUrl": `https://linebot-swhospital.diligentsoftinter.com/images/list11.png`
+        "originalContentUrl": `https://sw-center-line.diligentsoftinter.com/images/tel.jpg`,
+        "previewImageUrl": `https://sw-center-line.diligentsoftinter.com/images/tel.jpg`
     }
     return data
 }
 
-function imageList2() {
+function imageRoom() {
     let data = {
         "type": "image",
-        "originalContentUrl": `https://linebot-swhospital.diligentsoftinter.com/images/list12.png`,
-        "previewImageUrl": `https://linebot-swhospital.diligentsoftinter.com/images/list12.png`
+        "originalContentUrl": `https://sw-center-line.diligentsoftinter.com/images/room.jpg`,
+        "previewImageUrl": `https://sw-center-line.diligentsoftinter.com/images/room.jpg`
     }
     return data
 }
