@@ -67,36 +67,37 @@ app.get('/confirm/:userid/:vn', async (req, res) => {
 app.post('/webhook', (req, res) => {
     let message = ''
     let tdate = ''
-    // let reply_token = req.body.events[0].replyToken
-    // let userId = ''
-    // if (req.body.events[0].type == 'message') {
-    //     message = req.body.events[0].message.text
-    //     userId = req.body.events[0].source.userId
+    let reply_token = req.body.events[0].replyToken
+    let userId = ''
+    console.log(req.body.events[0])
+    if (req.body.events[0].type == 'message') {
+        message = req.body.events[0].message.text
+        userId = req.body.events[0].source.userId
 
-    // } else if (req.body.events[0].type == 'postback') {
-    //     tdate = moment(req.body.events[0].postback.params.datetime).format('YYYY-MM-DD')
-    //     message = 'date'
-    //     console.log(req.body.events[0])
-    // }
+    } else if (req.body.events[0].type == 'postback') {
+        tdate = moment(req.body.events[0].postback.params.datetime).format('YYYY-MM-DD')
+        message = 'date'
+        console.log(req.body.events[0])
+    }
 
 
-    // if (message == 'แนะนำสุขภาพ') {
-    //     reply(reply_token, 1)
-    // } else if (message == 'ข้อมูลรายการค่ารักษา') {
-    //     console.log('xx')
+    if (message == 'แนะนำสุขภาพ') {
+        reply(reply_token, 1)
+    } else if (message == 'ข้อมูลรายการค่ารักษา') {
+        console.log('xx')
 
-    //     reply(reply_token, 2, '')
-    // } else if (message == 'เพิ่มเติม') {
-    //     reply(reply_token, 3, '')
-    // } else if (message == 'จำนวนการจอง') {
-    //     reply(reply_token, 5, '')
-    // } else if (message == 'date') {
-    //     reply(reply_token, 6, tdate)
-    // } else if (message == 'ข้อมูลส่วนตัว') {
-    //     reply(reply_token, 7, userId)
-    // } else {
-    //     reply(reply_token, 4, '')
-    // }
+        reply(reply_token, 2, '')
+    } else if (message == 'เพิ่มเติม') {
+        reply(reply_token, 3, '')
+    } else if (message == 'จำนวนการจอง') {
+        reply(reply_token, 5, '')
+    } else if (message == 'date') {
+        reply(reply_token, 6, tdate)
+    } else if (message == 'ข้อมูลส่วนตัว') {
+        reply(reply_token, 7, userId)
+    } else {
+        reply(reply_token, 4, '')
+    }
 
     res.sendStatus(200)
 })
