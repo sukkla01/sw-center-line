@@ -657,7 +657,7 @@ function other() {
 
     let data = {
         type: 'text',
-        text: `ติดต่อสอบถามได้ที่ 096-978-3574 `
+        text: `ติดต่อสอบถามได้ที https://www.facebook.com/Srisangwornsukhothai `
     }
 
 
