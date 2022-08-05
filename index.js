@@ -102,6 +102,37 @@ app.post('/webhook', (req, res) => {
     res.sendStatus(200)
 })
 
+app.get('/rely_m/:user_id', async (req, res) => {
+    let user_id = req.params.user_id
+    let data = {
+        to: user_id,
+        messages: [
+            {
+                type: 'text',
+                text: `ส่งเรื่องเรียบร้อยแล้ว`
+            }
+        ]
+    }
+    request({
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer {${token}}`
+        },
+        url: 'https://api.line.me/v2/bot/message/push',
+        method: 'POST',
+        body: data,
+        json: true
+    }, async function (err, res, body) {
+        if (err) console.log(err)
+        if (res) {
+            console.log('success')
+        }
+        if (body) console.log(body)
+    })
+
+
+})
+
 
 app.get('/test2', async (req, res) => {
 
@@ -138,8 +169,8 @@ app.get('/test', async (req, res) => {
     where to_char(nextdate - INTERVAL '1 DAY', 'YYYY-mm-dd') = to_char(CURRENT_DATE,'YYYY-mm-dd')      `
 
     // con.query(" SELECT * FROM amulet  WHERE id = ? ", [id], function (err, results) {
-     const a = await db.query('SELECT 1');
-     console.log(a)
+    const a = await db.query('SELECT 1');
+    console.log(a)
     // const response = await db.query(sql);
     // console.log(response)
     // if (response.rows.length > 0) {
