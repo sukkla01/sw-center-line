@@ -89,43 +89,65 @@ app.get('/alert-confirm/:id', async (req, res) => {
     let user_id = ''
 
 
-    let sql = `SELECT user_id,boss_comment
-    FROM complain_head
-    WHERE id = '${id}'    `
-    const response = await db.query(sql);
-    if (response.rows.length > 0) {
-        console.log(response.rows[0])
-        boss_comment = response.rows[0].boss_comment
-        user_id = response.rows[0].user_id
+    try {
+        let sql = ` SELECT * FROM complain_head  WHERE id = '${id}'`
+        db.query(sql, (err, row) => {
+            if (err) return console.log(err)
+            boss_comment = row[0].boss_comment
+            user_id = row[0].user_id
+            reply_user(boss_comment, user_id)
+        })
+    } catch (error) {
+        console.log(error)
     }
 
-    let data = {
-        to: user_id,
-        messages: [
-            {
-                type: 'text',
-                text: `ชี้แจ้ง : ${boss_comment}`
-            }
-        ]
-    }
-    console.log(data)
-    request({
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer {${token}}`
-        },
-        url: 'https://api.line.me/v2/bot/message/push',
-        method: 'POST',
-        body: data,
-        json: true
-    }, async function (err, res, body) {
-        if (err) console.log(err)
-        if (res) {
-            console.log('success')
+
+
+
+    const reply_user = (boss_comment, user_id) => {
+        console.log(boss_comment, user_id)
+
+        let data = {
+            to: user_id,
+            messages: [
+                {
+                    type: 'text',
+                    text: `ชี้แจ้ง : ${boss_comment}`
+                }
+            ]
         }
-        if (body) console.log(body)
-    })
 
+        console.log(data)
+        request({
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer {${token}}`
+            },
+            url: 'https://api.line.me/v2/bot/message/push',
+            method: 'POST',
+            body: data,
+            json: true
+        }, async function (err, res, body) {
+            if (err) console.log(err)
+            if (res) {
+                console.log('success')
+            }
+            if (body) console.log(body)
+        })
+
+    }
+
+
+
+    // console.log(response)
+    // if (response.rows.length > 0) {
+    //     console.log(response.rows[0])
+    //     boss_comment = response.rows[0].boss_comment
+    //     user_id = response.rows[0].user_id
+    // }
+
+
+    
 
 })
 
