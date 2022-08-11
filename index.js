@@ -83,6 +83,53 @@ app.get('/rely_m/:user_id', async (req, res) => {
 })
 
 
+app.get('/alert-confirm/:id', async (req, res) => {
+    let id = req.params.id
+    let boss_comment = ''
+    let user_id = ''
+
+
+    let sql = `SELECT user_id,boss_comment
+    FROM complain_head
+    WHERE id = '${id}'    `
+    const response = await db.query(sql);
+    if (response.rows.length > 0) {
+        console.log(response.rows[0])
+        boss_comment = response.rows[0].boss_comment
+        user_id = response.rows[0].user_id
+    }
+
+    let data = {
+        to: user_id,
+        messages: [
+            {
+                type: 'text',
+                text: `ชี้แจ้ง : ${boss_comment}`
+            }
+        ]
+    }
+    console.log(data)
+    request({
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer {${token}}`
+        },
+        url: 'https://api.line.me/v2/bot/message/push',
+        method: 'POST',
+        body: data,
+        json: true
+    }, async function (err, res, body) {
+        if (err) console.log(err)
+        if (res) {
+            console.log('success')
+        }
+        if (body) console.log(body)
+    })
+
+
+})
+
+
 app.get('/test2', async (req, res) => {
 
     const a = await queryProfile('U2c04ba314d6649a7f6f2cc3b554b0ad9')
