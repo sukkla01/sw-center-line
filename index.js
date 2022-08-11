@@ -131,6 +131,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
             if (err) console.log(err)
             if (res) {
                 console.log('success')
+                res.send({'status':'OK'})
             }
             if (body) console.log(body)
         })
