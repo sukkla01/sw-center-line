@@ -131,7 +131,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
             if (err) console.log(err)
             if (res) {
                 console.log('success')
-                res.send({'status':'OK'})
+                
             }
             if (body) console.log(body)
         })
@@ -139,7 +139,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
     }
 
 
-
+    res.send({'status':'OK'})
     // console.log(response)
     // if (response.rows.length > 0) {
     //     console.log(response.rows[0])
