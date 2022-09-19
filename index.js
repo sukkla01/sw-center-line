@@ -218,43 +218,24 @@ cron.schedule('10 37 21 * * *', function () {
 // update opdscreen
 cron.schedule('10 30 12 * * *', async function () {
 
-    let DateTimeCur = new Date();
-    let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
-    let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
-    let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT qr.*,r.user_id,tel,r.cid,d.name AS dname,concat(p.fname,' ',p.lname) as tname
-            FROM diligent_queue_reserve qr
-            LEFT JOIN patient p ON p.hn = qr.hn
-            LEFT JOIN diligent_queue_register  r ON r.cid = p.cid
-            LEFT JOIN diligent_queue_dep d ON d.id = qr.dep::int
-            where to_char(nextdate - INTERVAL '1 DAY', 'YYYY-mm-dd') = to_char(CURRENT_DATE,'YYYY-mm-dd')      `
-    const response = await db.query(sql);
-    if (response.rows.length > 0) {
-        response.rows.map((item, i) => {
-            createImage(item)
-        })
-    }
+    // let DateTimeCur = new Date();
+    // let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
+    // let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
+    // let timeC = moment(DateTimeCur).format("HH:mm")
+    // let sql = `SELECT qr.*,r.user_id,tel,r.cid,d.name AS dname,concat(p.fname,' ',p.lname) as tname
+    //         FROM diligent_queue_reserve qr
+    //         LEFT JOIN patient p ON p.hn = qr.hn
+    //         LEFT JOIN diligent_queue_register  r ON r.cid = p.cid
+    //         LEFT JOIN diligent_queue_dep d ON d.id = qr.dep::int
+    //         where to_char(nextdate - INTERVAL '1 DAY', 'YYYY-mm-dd') = to_char(CURRENT_DATE,'YYYY-mm-dd')      `
+    // const response = await db.query(sql);
+    // if (response.rows.length > 0) {
+    //     response.rows.map((item, i) => {
+    //         createImage(item)
+    //     })
+    // }
 });
 //////// end
-cron.schedule('10 30 17 * * *', async function () {
-
-    let DateTimeCur = new Date();
-    let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
-    let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
-    let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT qr.*,r.user_id,tel,r.cid,d.name AS dname,concat(p.fname,' ',p.lname) as tname
-            FROM diligent_queue_reserve qr
-            LEFT JOIN patient p ON p.hn = qr.hn
-            LEFT JOIN diligent_queue_register  r ON r.cid = p.cid
-            LEFT JOIN diligent_queue_dep d ON d.id = qr.dep::int
-            where to_char(nextdate - INTERVAL '1 DAY', 'YYYY-mm-dd') = to_char(CURRENT_DATE,'YYYY-mm-dd')      `
-    const response = await db.query(sql);
-    if (response.rows.length > 0) {
-        response.rows.map((item, i) => {
-            createImage(item)
-        })
-    }
-});
 
 
 
