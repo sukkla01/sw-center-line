@@ -17,7 +17,7 @@ registerFont('./font/THSarabun Bold.ttf', { family: 'THSarabun' })
 app.use("/images", express.static(path.join(__dirname, "images")))
 const ping = require('ping');
 const token = '7aCy9SqzcUVgmv6mqcibTIA4EZ8s2TrbqXE4vnQz95mCdW+z9aIQjDeyCKSL11RhUjREJnRetPSIFCu/U17NA8oDyXj8AT0oD4B92GDytXXj2rVN8XQMteuleyz6Wx4RsOR5Ggt1rs3qQvDqXcg8ggdB04t89/1O/w1cDnyilFU='
-
+const token_group_line ='tsC5SYKialkyXj3UDrnwA8ck3FSk9qDKEQXBzdTyRzo'
 //reply
 app.post('/webhook', (req, res) => {
     let message = ''
@@ -131,7 +131,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
             if (err) console.log(err)
             if (res) {
                 console.log('success')
-                
+
             }
             if (body) console.log(body)
         })
@@ -139,7 +139,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
     }
 
 
-    res.send({'status':'OK'})
+    res.send({ 'status': 'OK' })
     // console.log(response)
     // if (response.rows.length > 0) {
     //     console.log(response.rows[0])
@@ -148,7 +148,7 @@ app.get('/alert-confirm/:id', async (req, res) => {
     // }
 
 
-    
+
 
 })
 
@@ -206,9 +206,95 @@ app.get('/test', async (req, res) => {
 // cron.schedule('*/30 * * * * *', async function () {
 //     pingT()
 // })
-cron.schedule('10 37 21 * * *', function () {
-    console.log(new Date().toLocaleString());
+//**** ด่วน 3 วัน   9 โมง */
+cron.schedule('01 00 09 * * *', async function () {
+    let DateTimeCur = new Date();
+    let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
+    let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
+    let timeC = moment(DateTimeCur).format("HH:mm")
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday
+    FROM complain_detail d 
+    LEFT JOIN complain_head h  ON h.id = complain_head_id
+    LEFT JOIN dept   dt  ON dt.id = d.dept_id
+    LEFT JOIN complain_type t ON t.id = d.type_complain_id
+    WHERE  dept_upDt is NULL AND  urgency_class ='1'  AND t.status = '1'
+    GROUP BY dt.name ,urgency_class,dept_id 
+    HAVING tday > 3   `
+
+    db.query(sql, (err, row) => {
+        if (err) return console.log(err)
+        if (row.length > 0) {
+            let message = '***ด่วน เกิน 3 วัน***\nหน่วยงานที่ยังไม่ได้ชี้แจง\n'
+            row.map((item, i) => {
+                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง\n\n'
+            })
+            message = message + 'https://admin-sswcenter.diligentsoftinter.com'
+            sendMeassage(message)
+        }
+    })
+
+
 });
+
+
+//**** ไม่ด่วน 7 วัน 9 โมง */
+cron.schedule('05 00 09 * * *', async function () {
+    let DateTimeCur = new Date();
+    let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
+    let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
+    let timeC = moment(DateTimeCur).format("HH:mm")
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday
+    FROM complain_detail d 
+    LEFT JOIN complain_head h  ON h.id = complain_head_id
+    LEFT JOIN dept   dt  ON dt.id = d.dept_id
+    LEFT JOIN complain_type t ON t.id = d.type_complain_id
+    WHERE  dept_upDt is NULL AND  urgency_class ='2'  AND t.status = '1'
+    GROUP BY dt.name ,urgency_class,dept_id 
+    HAVING tday > 7   `
+
+    db.query(sql, (err, row) => {
+        if (err) return console.log(err)
+        if (row.length > 0) {
+            let message = '***ไม่ด่วน เกิน 7 วัน***\nหน่วยงานที่ยังไม่ได้ชี้แจง\n'
+            row.map((item, i) => {
+                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง\n\n'
+            })
+            message = message + 'https://admin-sswcenter.diligentsoftinter.com'
+            sendMeassage(message)
+        }
+    })
+
+
+});
+
+
+function sendMeassage(message) {
+    console.log(message)
+    try {
+        request({
+            method: 'POST',
+            uri: "https://notify-api.line.me/api/notify",
+            header: {
+                'Content-Type': 'multipart/form-data',
+            },
+            auth: {
+                bearer: token_group_line,
+            },
+            form: {
+                message: message
+            },
+        }, (err, httpResponse, body) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(body)
+            }
+        });
+
+    } catch (error) {
+        console.log(error)
+    }
+}
 // cron.schedule('* 36 21 * * *', function(){
 //     console.log(new Date().toLocaleString());
 // });
