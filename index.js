@@ -88,11 +88,13 @@ app.get('/alert-confirm/:id', async (req, res) => {
     let boss_comment = ''
     let user_id = ''
 
+    console.log(id)
 
     try {
         let sql = ` SELECT * FROM complain_head  WHERE id = '${id}'`
         db.query(sql, (err, row) => {
             if (err) return console.log(err)
+            console.log(row)
             boss_comment = row[0].boss_comment
             user_id = row[0].user_id
             reply_user(boss_comment, user_id)
@@ -155,8 +157,11 @@ app.get('/alert-confirm/:id', async (req, res) => {
 
 app.get('/test2', async (req, res) => {
 
-    const a = await queryProfile('U2c04ba314d6649a7f6f2cc3b554b0ad9')
-    console.log(a)
+
+    console.log('test')
+
+    // const a = await queryProfile('U2c04ba314d6649a7f6f2cc3b554b0ad9')
+    // console.log(a)
 
 
     // fs.unlinkSync( `./images/${d.vn_reserve}.png`)
@@ -212,7 +217,7 @@ cron.schedule('01 00 09 * * *', async function () {
     let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
     let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
     let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,,h.no
     FROM complain_detail d 
     LEFT JOIN complain_head h  ON h.id = complain_head_id
     LEFT JOIN dept   dt  ON dt.id = d.dept_id
@@ -226,7 +231,7 @@ cron.schedule('01 00 09 * * *', async function () {
         if (row.length > 0) {
             let message = '***ด่วน เกิน 3 วัน***\nหน่วยงานที่ยังไม่ได้ชี้แจง\n'
             row.map((item, i) => {
-                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง\n\n'
+                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง (' + item.no  + ')\n\n'
             })
             message = message + 'https://admin-sswcenter.diligentsoftinter.com'
             sendMeassage(message)
@@ -243,7 +248,7 @@ cron.schedule('05 00 09 * * *', async function () {
     let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
     let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
     let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,,h.no
     FROM complain_detail d 
     LEFT JOIN complain_head h  ON h.id = complain_head_id
     LEFT JOIN dept   dt  ON dt.id = d.dept_id
@@ -257,7 +262,7 @@ cron.schedule('05 00 09 * * *', async function () {
         if (row.length > 0) {
             let message = '***ไม่ด่วน เกิน 7 วัน***\nหน่วยงานที่ยังไม่ได้ชี้แจง\n'
             row.map((item, i) => {
-                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง\n\n'
+                message = message + (i+1) +'. ' + item.name + ' ' + item.tcount + ' เรื่อง (' + item.no  + ')\n\n'
             })
             message = message + 'https://admin-sswcenter.diligentsoftinter.com'
             sendMeassage(message)
