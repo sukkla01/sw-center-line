@@ -217,7 +217,7 @@ cron.schedule('01 00 09 * * *', async function () {
     let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
     let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
     let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,,h.no
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,h.no
     FROM complain_detail d 
     LEFT JOIN complain_head h  ON h.id = complain_head_id
     LEFT JOIN dept   dt  ON dt.id = d.dept_id
@@ -248,7 +248,7 @@ cron.schedule('05 00 09 * * *', async function () {
     let curdate = moment(DateTimeCur).format("YYYY-MM-DD")
     let curdate_tmp = moment(DateTimeCur).format("HH:mm:ss")
     let timeC = moment(DateTimeCur).format("HH:mm")
-    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,,h.no
+    let sql = `SELECT h.id,dt.name ,urgency_class,DATE_FORMAT(staff_upDt, "%Y-%m-%d") as tdate,count(d.id) AS tcount,DATEDIFF(CURRENT_DATE,DATE_FORMAT(staff_upDt, "%Y-%m-%d")) as tday,h.no
     FROM complain_detail d 
     LEFT JOIN complain_head h  ON h.id = complain_head_id
     LEFT JOIN dept   dt  ON dt.id = d.dept_id
